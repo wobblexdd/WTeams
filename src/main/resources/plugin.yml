@@ -1,17 +1,60 @@
 name: WobbleTeams
+
 version: 2.5.0
+
 main: net.wobble.teams.WobbleTeams
+
 api-version: '1.21'
+
 author: Wobble
 
+
+
 softdepend:
+
   - PlaceholderAPI
 
+
+
 commands:
+
   team:
+
+    description: Main team command
+
+    usage: /team
+
   teamsettings:
+
+    description: Open team settings
+
+    usage: /teamsettings
+
   allygui:
 
+    description: Open ally manager GUI
+
+    usage: /allygui
+
+
+
 permissions:
+
   wobbleteams.admin:
+
+    description: Full admin access to WobbleTeams
+
     default: op
+
+  wobbleteams.reload:
+
+    description: Reload WobbleTeams
+
+    default: op
+
+  wobbleteams.rename:
+
+    description: Allow renaming teams
+
+    default: op
+

@@ -32,7 +32,6 @@ public final class InventorySafetyListener implements Listener {
                 || click == ClickType.NUMBER_KEY
                 || click == ClickType.DOUBLE_CLICK
                 || action == InventoryAction.COLLECT_TO_CURSOR
-                || action == InventoryAction.HOTBAR_MOVE_AND_READD
                 || action == InventoryAction.HOTBAR_SWAP
                 || action == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
             event.setCancelled(true);

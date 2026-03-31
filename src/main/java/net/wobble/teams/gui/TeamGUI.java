@@ -43,7 +43,7 @@ public final class TeamGUI {
             return;
         }
 
-        Inventory inventory = Bukkit.createInventory(null, 54, "Team");
+        Inventory inventory = Bukkit.createInventory(null, 54, "TEAM");
 
         fillBackground(inventory);
         placeFrame(inventory);
@@ -113,7 +113,7 @@ public final class TeamGUI {
     }
 
     private void openNoTeam(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, "Team");
+        Inventory inventory = Bukkit.createInventory(null, 27, "TEAM");
 
         fillBackground(inventory);
 

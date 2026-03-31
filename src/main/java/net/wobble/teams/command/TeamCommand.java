@@ -2,6 +2,7 @@ package net.wobble.teams.command;
 
 import net.wobble.teams.WobbleTeams;
 import net.wobble.teams.gui.TeamGUI;
+import net.wobble.teams.gui.invite.InviteGUI;
 import net.wobble.teams.manager.InviteData;
 import net.wobble.teams.manager.TeamChatManager;
 import net.wobble.teams.manager.TeamHomeTeleportManager;
@@ -28,6 +29,7 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
     private final WobbleTeams plugin;
     private final TeamManager manager;
     private final TeamGUI gui;
+    private final InviteGUI inviteGUI;
     private final TeamChatManager chatManager;
     private final TeamHomeTeleportManager homeTeleportManager;
 
@@ -35,6 +37,7 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         this.manager = manager;
         this.gui = gui;
+        this.inviteGUI = plugin.getInviteGUI();
         this.chatManager = plugin.getTeamChatManager();
         this.homeTeleportManager = plugin.getTeamHomeTeleportManager();
     }
@@ -86,6 +89,21 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage(ChatUtil.message(plugin, "create-success", "{name}", name));
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.success"), 1f, 1f);
             }
+            case "invitegui" -> {
+                String teamName = manager.getTeamName(player.getUniqueId());
+                if (teamName == null) {
+                    player.sendMessage(ChatUtil.message(plugin, "no-team"));
+                    SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
+                    return true;
+                }
+                if (!manager.isLeader(player.getUniqueId(), teamName)) {
+                    player.sendMessage(ChatUtil.message(plugin, "gui-only-leader"));
+                    SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
+                    return true;
+                }
+                inviteGUI.open(player);
+                SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
+            }
             case "invite" -> {
                 if (args.length < 2) {
                     player.sendMessage(ChatUtil.message(plugin, "usage-invite"));
@@ -124,6 +142,8 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
                 target.sendMessage(ChatUtil.message(plugin, "invite-received",
                         "{player}", player.getName(),
                         "{team}", teamName == null ? "Unknown" : teamName));
+                target.sendMessage(net.kyori.adventure.text.Component.text("[ACCEPT INVITE]")
+                        .clickEvent(net.kyori.adventure.text.event.ClickEvent.runCommand("/team accept")));
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.success"), 1f, 1f);
                 SoundUtil.play(target, plugin.getConfig().getString("sounds.notify"), 1f, 1.15f);
             }
@@ -255,7 +275,7 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                if (!player.hasPermission("wobbleteams.rename")) {
+                if (!player.hasPermission("wobbleteams.rename") && !player.hasPermission("wobbleteams.admin")) {
                     player.sendMessage(ChatUtil.message(plugin, "rename-no-permission"));
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return true;
@@ -320,8 +340,8 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.success"), 1f, 1f);
             }
             case "reload" -> {
-                if (!player.hasPermission("wobbleteams.reload")) {
-                    player.sendMessage(ChatUtil.message(plugin, "not-leader"));
+                if (!player.hasPermission("wobbleteams.reload") && !player.hasPermission("wobbleteams.admin")) {
+                    player.sendMessage(ChatUtil.message(plugin, "admin-no-permission"));
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return true;
                 }
@@ -574,6 +594,7 @@ public final class TeamCommand implements CommandExecutor, TabCompleter {
             list.add("menu");
             list.add("create");
             list.add("invite");
+            list.add("invitegui");
             list.add("accept");
             list.add("deny");
             list.add("ally");
