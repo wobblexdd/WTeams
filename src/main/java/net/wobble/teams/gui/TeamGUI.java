@@ -3,6 +3,7 @@ package net.wobble.teams.gui;
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
 import net.wobble.teams.manager.TeamManager;
+import net.wobble.teams.manager.TeamPermission;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,7 +44,9 @@ public final class TeamGUI {
             return;
         }
 
-        Inventory inventory = Bukkit.createInventory(null, 54, "TEAM");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.TEAM_MAIN, 54, "TEAM");
+        boolean canInvite = manager.isLeader(player.getUniqueId(), teamName)
+                || manager.hasPermission(player.getUniqueId(), teamName, TeamPermission.INVITE);
 
         fillBackground(inventory);
         placeFrame(inventory);
@@ -70,7 +73,7 @@ public final class TeamGUI {
         ));
 
         inventory.setItem(SLOT_INVITE, simpleItem(
-                manager.isLeader(player.getUniqueId(), teamName) ? Material.LIME_DYE : Material.GRAY_DYE,
+                canInvite ? Material.LIME_DYE : Material.GRAY_DYE,
                 msg("gui-invite-name"),
                 List.of(
                         mm(msg("gui-invite-lore-1")),
@@ -113,7 +116,7 @@ public final class TeamGUI {
     }
 
     private void openNoTeam(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 27, "TEAM");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.TEAM_NO_TEAM, 27, "TEAM");
 
         fillBackground(inventory);
 

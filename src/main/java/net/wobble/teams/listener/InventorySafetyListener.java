@@ -1,6 +1,6 @@
 package net.wobble.teams.listener;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.wobble.teams.gui.ManagedGui;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
@@ -12,16 +12,14 @@ public final class InventorySafetyListener implements Listener {
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
-        String title = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
-        if (isProtected(title)) {
+        if (ManagedGui.isManaged(event.getView())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onUnsafeClick(InventoryClickEvent event) {
-        String title = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
-        if (!isProtected(title)) {
+        if (!ManagedGui.isManaged(event.getView())) {
             return;
         }
 
@@ -36,16 +34,5 @@ public final class InventorySafetyListener implements Listener {
                 || action == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
             event.setCancelled(true);
         }
-    }
-
-    private boolean isProtected(String title) {
-        return title.equalsIgnoreCase("TEAM")
-                || title.equalsIgnoreCase("MEMBER MANAGER")
-                || title.equalsIgnoreCase("MEMBER SETTINGS")
-                || title.equalsIgnoreCase("TEAM SETTINGS")
-                || title.equalsIgnoreCase("ALLY MANAGER")
-                || title.equalsIgnoreCase("CONFIRM LEAVING TEAM")
-                || title.equalsIgnoreCase("CONFIRM KICKING PLAYER")
-                || title.equalsIgnoreCase("CONFIRM DISBANDING TEAM");
     }
 }

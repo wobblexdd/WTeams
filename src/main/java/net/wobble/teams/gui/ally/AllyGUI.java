@@ -2,6 +2,7 @@ package net.wobble.teams.gui.ally;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.manager.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,7 +30,7 @@ public final class AllyGUI {
     }
 
     public void open(Player player, String teamName) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "Ally Manager");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.ALLY_MANAGER, 54, "Ally Manager");
         fillBackground(inventory);
 
         List<String> allies = manager.getAllies(teamName);

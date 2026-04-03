@@ -2,6 +2,7 @@ package net.wobble.teams.gui.confirm;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public final class ConfirmGUI {
             case DISBAND -> msg("confirm-title-disband");
         };
 
-        Inventory inventory = Bukkit.createInventory(null, 27, color(title));
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.CONFIRM, 27, color(title));
 
         fillBackground(inventory);
 

@@ -58,6 +58,6 @@ public final class TeamsPlaceholder extends PlaceholderExpansion {
             return team == null ? "0" : String.valueOf(manager.getAllies(team).size());
         }
 
-        return null;
+        return "";
     }
 }

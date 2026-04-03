@@ -1,12 +1,16 @@
 package net.wobble.teams.listener;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.gui.TeamGUI;
 import net.wobble.teams.gui.TeamGuiContext;
 import net.wobble.teams.gui.TeamGuiState;
 import net.wobble.teams.gui.confirm.ConfirmContext;
 import net.wobble.teams.gui.confirm.ConfirmGUI;
 import net.wobble.teams.gui.confirm.ConfirmType;
+import net.wobble.teams.gui.invite.InviteGUI;
 import net.wobble.teams.gui.member.MemberGUI;
 import net.wobble.teams.gui.member.MemberGuiContext;
 import net.wobble.teams.gui.member.MemberSettingsContext;
@@ -15,10 +19,8 @@ import net.wobble.teams.gui.settings.TeamSettingsGUI;
 import net.wobble.teams.manager.TeamChatManager;
 import net.wobble.teams.manager.TeamManager;
 import net.wobble.teams.manager.TeamPermission;
-import net.wobble.teams.manager.TeamSettings;
 import net.wobble.teams.util.ChatUtil;
 import net.wobble.teams.util.SoundUtil;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -37,6 +39,7 @@ public final class TeamListener implements Listener {
     private final TeamGUI gui;
     private final MemberGUI memberGUI;
     private final ConfirmGUI confirmGUI;
+    private final InviteGUI inviteGUI;
     private final MemberSettingsGUI memberSettingsGUI;
     private final TeamSettingsGUI teamSettingsGUI;
     private final TeamChatManager teamChatManager;
@@ -47,6 +50,7 @@ public final class TeamListener implements Listener {
         this.gui = plugin.getTeamGUI();
         this.memberGUI = plugin.getMemberGUI();
         this.confirmGUI = plugin.getConfirmGUI();
+        this.inviteGUI = plugin.getInviteGUI();
         this.memberSettingsGUI = plugin.getMemberSettingsGUI();
         this.teamSettingsGUI = plugin.getTeamSettingsGUI();
         this.teamChatManager = plugin.getTeamChatManager();
@@ -54,35 +58,24 @@ public final class TeamListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getView().title() == null) return;
-
-        String title = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
-
-        if (title.equalsIgnoreCase("TEAM")) {
-            handleMainGui(event, player);
+        if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
-        if (title.equalsIgnoreCase("MEMBER MANAGER")) {
-            handleMemberGui(event, player);
+        ManagedGui.Type guiType = ManagedGui.getType(event.getView());
+        if (guiType == null) {
             return;
         }
 
-        if (title.equalsIgnoreCase("CONFIRM LEAVING TEAM")
-                || title.equalsIgnoreCase("CONFIRM KICKING PLAYER")
-                || title.equalsIgnoreCase("CONFIRM DISBANDING TEAM")) {
-            handleConfirmGui(event, player);
-            return;
-        }
-
-        if (title.equalsIgnoreCase("MEMBER SETTINGS")) {
-            handleMemberSettingsGui(event, player);
-            return;
-        }
-
-        if (title.equalsIgnoreCase("TEAM SETTINGS")) {
-            handleTeamSettingsGui(event, player);
+        switch (guiType) {
+            case TEAM_MAIN, TEAM_NO_TEAM -> handleMainGui(event, player);
+            case MEMBER_LIST -> handleMemberGui(event, player);
+            case CONFIRM -> handleConfirmGui(event, player);
+            case MEMBER_SETTINGS -> handleMemberSettingsGui(event, player);
+            case TEAM_SETTINGS -> handleTeamSettingsGui(event, player);
+            case INVITE -> handleInviteGui(event, player);
+            case ALLY_MANAGER -> {
+            }
         }
     }
 
@@ -120,8 +113,8 @@ public final class TeamListener implements Listener {
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return;
                 }
-                player.closeInventory();
-                player.sendMessage(ChatUtil.message(plugin, "gui-open-invite-help"));
+
+                inviteGUI.open(player);
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
             }
             case TeamGUI.SLOT_SETTINGS -> {
@@ -130,6 +123,7 @@ public final class TeamListener implements Listener {
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return;
                 }
+
                 teamSettingsGUI.open(player, teamName);
                 player.sendMessage(ChatUtil.message(plugin, "gui-open-settings"));
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
@@ -140,6 +134,7 @@ public final class TeamListener implements Listener {
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return;
                 }
+
                 confirmGUI.open(player, new ConfirmContext(player.getUniqueId(), ConfirmType.LEAVE, teamName, null, teamName, 1));
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
             }
@@ -149,6 +144,7 @@ public final class TeamListener implements Listener {
                     SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
                     return;
                 }
+
                 confirmGUI.open(player, new ConfirmContext(player.getUniqueId(), ConfirmType.DISBAND, teamName, null, teamName, 1));
                 SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
             }
@@ -246,6 +242,45 @@ public final class TeamListener implements Listener {
 
         memberSettingsGUI.open(player, teamName, selected, page);
         SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
+    }
+
+    private void handleInviteGui(InventoryClickEvent event, Player player) {
+        if (event.getClickedInventory() == null) return;
+        if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
+
+        event.setCancelled(true);
+
+        if (event.getRawSlot() == InviteGUI.SLOT_BACK) {
+            gui.open(player);
+            SoundUtil.play(player, plugin.getConfig().getString("sounds.click"), 1f, 1f);
+            return;
+        }
+
+        Player target = inviteGUI.getTarget(player.getUniqueId(), event.getRawSlot());
+        if (target == null) {
+            SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
+            return;
+        }
+
+        boolean success = manager.invitePlayer(player, target);
+        if (!success) {
+            player.sendMessage(ChatUtil.message(plugin, "invite-failed"));
+            inviteGUI.open(player);
+            SoundUtil.play(player, plugin.getConfig().getString("sounds.error"), 1f, 1f);
+            return;
+        }
+
+        String teamName = manager.getTeamName(player.getUniqueId());
+        player.sendMessage(ChatUtil.message(plugin, "invite-sent", "{player}", target.getName()));
+        target.sendMessage(ChatUtil.message(plugin, "invite-received",
+                "{player}", player.getName(),
+                "{team}", teamName == null ? "Unknown" : teamName));
+        target.sendMessage(Component.text("[ACCEPT INVITE]")
+                .clickEvent(ClickEvent.runCommand("/team accept")));
+
+        inviteGUI.open(player);
+        SoundUtil.play(player, plugin.getConfig().getString("sounds.success"), 1f, 1f);
+        SoundUtil.play(target, plugin.getConfig().getString("sounds.notify"), 1f, 1.15f);
     }
 
     private void handleConfirmGui(InventoryClickEvent event, Player player) {
@@ -413,11 +448,33 @@ public final class TeamListener implements Listener {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player player)) return;
-        gui.clearContext(player.getUniqueId());
-        memberGUI.clearContext(player.getUniqueId());
-        confirmGUI.clearContext(player.getUniqueId());
-        memberSettingsGUI.clearContext(player.getUniqueId());
-        teamSettingsGUI.clearContext(player.getUniqueId());
+        if (!(event.getPlayer() instanceof Player player)) {
+            return;
+        }
+
+        ManagedGui.Type closedType = ManagedGui.getType(event.getInventory());
+        if (closedType == null) {
+            return;
+        }
+
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (ManagedGui.getType(player.getOpenInventory()) == closedType) {
+                return;
+            }
+            clearContext(player.getUniqueId(), closedType);
+        });
+    }
+
+    private void clearContext(UUID playerId, ManagedGui.Type closedType) {
+        switch (closedType) {
+            case TEAM_MAIN, TEAM_NO_TEAM -> gui.clearContext(playerId);
+            case MEMBER_LIST -> memberGUI.clearContext(playerId);
+            case CONFIRM -> confirmGUI.clearContext(playerId);
+            case MEMBER_SETTINGS -> memberSettingsGUI.clearContext(playerId);
+            case TEAM_SETTINGS -> teamSettingsGUI.clearContext(playerId);
+            case INVITE -> inviteGUI.clear(playerId);
+            case ALLY_MANAGER -> {
+            }
+        }
     }
 }

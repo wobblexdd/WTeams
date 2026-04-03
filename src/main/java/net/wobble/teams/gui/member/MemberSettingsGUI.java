@@ -2,6 +2,7 @@ package net.wobble.teams.gui.member;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.manager.TeamManager;
 import net.wobble.teams.manager.TeamPermission;
 import org.bukkit.Bukkit;
@@ -41,7 +42,7 @@ public final class MemberSettingsGUI {
         String targetName = target.getName() == null ? targetId.toString() : target.getName();
         boolean leader = manager.isLeader(targetId, teamName);
 
-        Inventory inventory = Bukkit.createInventory(null, 27, "Member Settings");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.MEMBER_SETTINGS, 27, "Member Settings");
         fillBackground(inventory);
 
         inventory.setItem(SLOT_INFO, simpleItem(

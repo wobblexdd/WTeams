@@ -2,6 +2,7 @@ package net.wobble.teams.gui.invite;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.manager.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -35,7 +36,7 @@ public final class InviteGUI {
     }
 
     public void open(Player viewer) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "TEAM INVITES");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.INVITE, 54, "TEAM INVITES");
         fill(inventory);
         inventory.setItem(4, simple(Material.BOOK, "§aInvite Online Players", "§7Click a head to invite"));
         inventory.setItem(SLOT_BACK, simple(Material.BARRIER, "§cBack", "§7Return to team menu"));

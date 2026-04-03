@@ -2,6 +2,7 @@ package net.wobble.teams.gui.settings;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.manager.TeamManager;
 import net.wobble.teams.manager.TeamSettings;
 import org.bukkit.Bukkit;
@@ -37,7 +38,7 @@ public final class TeamSettingsGUI {
     public void open(Player player, String teamName) {
         TeamSettings settings = manager.getTeamSettings(teamName);
 
-        Inventory inventory = Bukkit.createInventory(null, 27, "Team Settings");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.TEAM_SETTINGS, 27, "Team Settings");
         fillBackground(inventory);
 
         inventory.setItem(SLOT_INFO, simpleItem(

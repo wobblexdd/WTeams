@@ -1,7 +1,7 @@
 package net.wobble.teams.listener;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.gui.TeamGUI;
 import net.wobble.teams.gui.ally.AllyGUI;
 import net.wobble.teams.manager.TeamManager;
@@ -31,10 +31,7 @@ public final class AllyGuiListener implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getView().title() == null) return;
-
-        String title = PlainTextComponentSerializer.plainText().serialize(event.getView().title());
-        if (!title.equalsIgnoreCase("ALLY MANAGER")) return;
+        if (ManagedGui.getType(event.getView()) != ManagedGui.Type.ALLY_MANAGER) return;
         if (event.getClickedInventory() == null) return;
         if (event.getRawSlot() >= event.getView().getTopInventory().getSize()) return;
 
@@ -84,6 +81,13 @@ public final class AllyGuiListener implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) return;
-        plugin.getAllyGuiContext().remove(player.getUniqueId());
+        if (ManagedGui.getType(event.getInventory()) != ManagedGui.Type.ALLY_MANAGER) return;
+
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (ManagedGui.getType(player.getOpenInventory()) == ManagedGui.Type.ALLY_MANAGER) {
+                return;
+            }
+            plugin.getAllyGuiContext().remove(player.getUniqueId());
+        });
     }
 }

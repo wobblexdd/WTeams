@@ -2,6 +2,7 @@ package net.wobble.teams.gui.member;
 
 import net.kyori.adventure.text.Component;
 import net.wobble.teams.WobbleTeams;
+import net.wobble.teams.gui.ManagedGui;
 import net.wobble.teams.manager.TeamManager;
 import net.wobble.teams.util.Pagination;
 import org.bukkit.Bukkit;
@@ -48,7 +49,7 @@ public final class MemberGUI {
         if (page < 1) page = 1;
         if (page > maxPage) page = maxPage;
 
-        Inventory inventory = Bukkit.createInventory(null, 54, "Member Manager");
+        Inventory inventory = ManagedGui.createInventory(ManagedGui.Type.MEMBER_LIST, 54, "Member Manager");
         fillBackground(inventory);
         placeFrame(inventory);
 
