@@ -181,7 +181,7 @@ public final class WobbleTeams extends JavaPlugin {
 
         Bootstrap.init(this);
 
-        getLogger().info("WobbleTeams v2 enabled.");
+        getLogger().info("WTeams v2 enabled.");
 
     }
 

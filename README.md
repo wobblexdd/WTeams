@@ -1,4 +1,4 @@
-# ⚔️ WobbleTeams
+# ⚔️ WTeams
 
 Production-ready ecosystem team plugin.
 

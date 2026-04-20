@@ -12,7 +12,7 @@
 
     <groupId>net.wobble</groupId>
 
-    <artifactId>WobbleTeams</artifactId>
+    <artifactId>WTeams</artifactId>
 
     <version>1.0.0</version>
 
@@ -20,7 +20,7 @@
 
 
 
-    <name>WobbleTeams</name>
+    <name>WTeams</name>
 
     <description>Modern GUI-first ecosystem team plugin</description>
 

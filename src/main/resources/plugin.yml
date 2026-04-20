@@ -1,5 +1,4 @@
-name: WobbleTeams
-
+name: WTeams
 version: 2.5.0
 
 main: net.wobble.teams.WobbleTeams
