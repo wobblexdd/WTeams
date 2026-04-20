@@ -1,7 +1,7 @@
 name: WTeams
 version: 2.5.0
 
-main: net.wobble.teams.WobbleTeams
+main: net.wobble.wteams.WTeams
 
 api-version: '1.21'
 
@@ -39,19 +39,19 @@ commands:
 
 permissions:
 
-  wobbleteams.admin:
+  wteams.admin:
 
-    description: Full admin access to WobbleTeams
-
-    default: op
-
-  wobbleteams.reload:
-
-    description: Reload WobbleTeams
+    description: Full admin access to WTeams
 
     default: op
 
-  wobbleteams.rename:
+  wteams.reload:
+
+    description: Reload WTeams
+
+    default: op
+
+  wteams.rename:
 
     description: Allow renaming teams
 

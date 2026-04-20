@@ -17,10 +17,10 @@ Production-ready ecosystem team plugin.
 - PlaceholderAPI support
 
 ## Placeholders
-- %wobbleteams_team%
-- %wobbleteams_leader%
-- %wobbleteams_members%
-- %wobbleteams_allies%
+- %wteams_team%
+- %wteams_leader%
+- %wteams_members%
+- %wteams_allies%
 
 ## Status
 Ecosystem-level plugin complete.
