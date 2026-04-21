@@ -23,7 +23,7 @@ kick-success: "&aKicked &f{player}&a from the team."
 kick-failed: "&cCould not kick that player."
 
 not-leader: "&cYou are not the leader."
-reload-success: "&aWTeams reloaded."
+reload-success: "&aKTeams reloaded."
 
 usage-create: "&eUsage: /team create <name>"
 usage-info: "&eUsage: /team info"

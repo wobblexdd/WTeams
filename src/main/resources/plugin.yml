@@ -1,11 +1,11 @@
-name: WTeams
+name: KTeams
 version: 2.5.0
 
-main: net.wobble.wteams.WTeams
+main: net.klouse.kteams.KTeams
 
 api-version: '1.21'
 
-author: Wobble
+author: Klouse
 
 
 
@@ -39,19 +39,19 @@ commands:
 
 permissions:
 
-  wteams.admin:
+  kteams.admin:
 
-    description: Full admin access to WTeams
-
-    default: op
-
-  wteams.reload:
-
-    description: Reload WTeams
+    description: Full admin access to KTeams
 
     default: op
 
-  wteams.rename:
+  kteams.reload:
+
+    description: Reload KTeams
+
+    default: op
+
+  kteams.rename:
 
     description: Allow renaming teams
 

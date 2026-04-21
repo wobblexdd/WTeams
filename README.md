@@ -1,4 +1,4 @@
-# ⚔️ WTeams
+# ⚔️ KTeams
 
 Production-ready ecosystem team plugin.
 
@@ -17,10 +17,10 @@ Production-ready ecosystem team plugin.
 - PlaceholderAPI support
 
 ## Placeholders
-- %wteams_team%
-- %wteams_leader%
-- %wteams_members%
-- %wteams_allies%
+- %kteams_team%
+- %kteams_leader%
+- %kteams_members%
+- %kteams_allies%
 
 ## Status
 Ecosystem-level plugin complete.

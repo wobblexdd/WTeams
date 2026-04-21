@@ -10,9 +10,9 @@
 
 
 
-    <groupId>net.wobble</groupId>
+    <groupId>net.klouse</groupId>
 
-    <artifactId>WTeams</artifactId>
+    <artifactId>KTeams</artifactId>
 
     <version>1.0.0</version>
 
@@ -20,7 +20,7 @@
 
 
 
-    <name>WTeams</name>
+    <name>KTeams</name>
 
     <description>Modern GUI-first ecosystem team plugin</description>
 
